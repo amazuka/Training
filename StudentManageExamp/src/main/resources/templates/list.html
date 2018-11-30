@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head"></head>
+<body>
+	<nav th:replace="layout :: header"></nav>
+
+	<div class="container main-content list">
+		<div th:if="${success}"
+			class="row alert alert-success alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">×</span>
+			</button>
+			<span th:text="${success}"></span>
+		</div>
+		<div class="row">
+			<a th:href="@{/student/create}" class="btn btn-success pull-left">
+				<span class="glyphicon glyphicon-plus"></span> Add new student
+			</a>
+			<form class="form-inline pull-right" id="search-form">
+				<div class="form-group">
+					<input type="text" class="form-control" name="searchName"
+						placeholder="Type student name..." />
+				</div>
+				<button type="submit" class="btn btn-primary">Search</button>
+				<p id="demo"></p>
+			</form>
+		</div>
+		<th:block th:if="${#lists.isEmpty(students.pageList)}">
+			<h3>No student</h3>
+		</th:block>
+
+		<th:block th:unless="${#lists.isEmpty(students.pageList)}">
+			<nav class="row justify-content-center wow fadeIn"
+				data-wow-delay="0.2s">
+				<div class="row">
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Student Code</th>
+								<th>Full Name</th>
+								<th>Date of birth</th>
+								<th>Address</th>
+								<th>Sex</th>
+								<th>Admission Day</th>
+								<th>Faculty</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="student,iterStat : ${students.pageList}">
+								<td th:text="${iterStat.count}"></td>
+								<td th:utext="${student.studentCode}">..</td>
+								<td th:utext="${student.name}">..</td>
+								<td th:utext="${student.dateOfBirth}">..</td>
+								<td th:utext="${student.address}">..</td>
+								<td th:utext="${student.sex}">..</td>
+								<td th:utext="${student.admissionDay}">..</td>
+								<td th:utext="${student.faculty.name}">..</td>
+								<td><a th:href="@{/student/{id}/edit(id=${student.id})}"><span
+										class="glyphicon glyphicon-pencil"></span></a></td>
+								<td><a th:href="@{/student/{id}/delete(id=${student.id})}"><span
+										class="glyphicon glyphicon-trash"></span></a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<ul class="pagination">
+					<li
+						th:class="${currentIndex == 1}? 'page-item disabled' : 'page-item'">
+						<a class="page-link" href="#" onclick="pageButtonClick('${currentIndex == 1}')">First</a>
+					</li>
+					<li
+						th:class="${currentIndex == 1}? 'page-item disabled': 'page-item' ">
+						<a class="page-link" aria-label="Previous"
+						href="#" onclick="pageButtonClick('${currentIndex-1}')"
+						title='Go to previous page'><span aria-hidden="true">«</span>
+							<span class="sr-only">Previous</span></a>
+					</li>
+					<li th:each="item : ${#numbers.sequence(1,students.pageCount)}"
+						th:class="${item == currentIndex ? 'page-item active' :'page-item' }">
+
+						<a class="page-link" href="#" onclick="pageButtonClick(this)"> <span
+							th:text='${item}'>1</span>
+					</a>
+					</li>
+					<li
+						th:class="${currentIndex == totalPageCount}? 'page-item disabled': 'page-item'">
+						<a class="page-link" aria-label="Next" href="#"
+						onclick="pageButtonClick('${currentIndex+1}')"
+						title='Go to next page'><span aria-hidden="true">»</span> <span
+							class="sr-only">Next</span></a>
+					</li>
+					<li
+						th:class="${currentIndex == totalPageCount}? 'page-item disabled':'page-item'">
+						<a class="page-link" href="#" onclick="pageButtonClick('${totalPageCount}')">Last</a>
+					</li>
+				</ul>
+			</nav>
+
+		</th:block>
+	</div>
+	<!-- /.container -->
+
+	<footer th:replace="layout :: footer"></footer>
+
+	<script>
+		$(document).ready(function () {
+
+		    $("#search-form").submit(function (event) {
+
+		        //stop submit the form, we will post it manually.
+		        event.preventDefault();
+
+		        pageButtonClick(1);
+
+		    });
+		});
+
+		function pageButtonClick(targetPage) {
+			var current = targetPage;
+			var name = $('input[name="searchName"]').val();
+			$.ajax({
+				url : window.location + "/search",
+				type : "POST",
+				data : {
+					name : name,
+					current : current
+				},
+				success : function(result) {
+					console.log(result);
+					$('body').html(result);
+				},
+				error : function(e) {
+					alert("Error!")
+					console.log("ERROR: ", e);
+				}
+			});
+		}
+	</script>
+</body>
+</html>

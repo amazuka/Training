@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head"></head>
+<body>
+    <nav th:replace="layout :: header"></nav>
+
+    <div class="container main-content form">
+        <div class="row">
+          	<form th:action="@{/studentForm}" th:object="${student}"
+		    method="POST" >
+		    <input type="hidden" th:field="*{id}" />
+
+		    <div class="form-group">
+		        <label>StudentCode</label>
+		        <input type="text" class="form-control"
+		            th:field="*{studentCode}" />
+		    </div>
+
+		    <div class="form-group">
+		        <label>Full Name</label>
+		        <input type="text" class="form-control"
+		            th:field="*{name}" />
+		    </div>
+
+		    <div class="form-group">
+		        <label>Date of birth</label>
+		        <input type="date" class="form-control" th:field="*{dateOfBirth}" />
+		    </div>
+
+		    <div class="form-group">
+		        <label>Address</label>
+		        <input type="text" class="form-control" th:field="*{address}" />
+		    </div>
+
+			<div class="form-group">
+		        <label>Sex</label>
+		        <input type="text" class="form-control" th:field="*{sex}" />
+		    </div>
+
+		    <div class="form-group">
+		        <label>Admission day</label>
+		        <input type="date" class="form-control" th:field="*{admissionDay}" />
+		    </div>
+
+			 <div class="form-group">
+		        <label>Faculty</label>
+		        <select name = "faculty_id" class="form-group">
+    					<option th:each="_faculty : ${faculties}" th:value="${_faculty.id}" th:text="${_faculty.name}"
+    					th:selected="${_faculty.id == student.faculty.id}"> </option>
+				</select>
+		    </div>
+
+		    <button type="submit" name="insert" class="btn btn-primary">Insert</button>
+		    <button type="submit" name="update" class="btn btn-primary">Update</button>
+		</form>
+        </div>
+    </div><!-- /.container -->
+
+    <footer th:replace="layout :: footer"></footer>
+</body>
+</html>
